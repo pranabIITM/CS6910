@@ -1,6 +1,6 @@
-* Deep learning CS6910
-** Assignment 2
-***** By - Pranab Rout (CS21M045) and Pratyush Dash (CS21M046)
+*Deep learning CS6910
+**Assignment 2
+*****By - Pranab Rout (CS21M045) and Pratyush Dash (CS21M046)
 <hr>
 
 Goal - Learn convolutional neural network (CNN)
