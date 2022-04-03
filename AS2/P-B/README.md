@@ -34,11 +34,13 @@
         rmsprop
         adam
         adamax
-<br>
+
+
 ### Source code file - <br>
 1. PartB.ipynb - To run code using wandb <br>
 2. PartBTerminal.py - To run code in terminal without wandb <br>
-<br>
+
+
 ### Instructions to run PartB.ipynb - 
 
 (suggestion - use google colab for coding)
