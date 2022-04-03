@@ -1,4 +1,4 @@
-# Deep learning CS6910
+# Fundamentals of deep learning CS6910
 ## Assignment 2
 ##### By - Pranab Rout (CS21M045) and Pratyush Dash (CS21M046)
 <hr>
