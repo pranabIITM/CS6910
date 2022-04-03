@@ -39,7 +39,7 @@ def dataProcess(batch_size = 32, data_aug = True, image_size = [299,299]):
     # generate train dataset
     train_generator = train_datagen.flow_from_directory(
         train_path,
-        subset='training',
+        subset = 'training',
         target_size = image_size,
         batch_size = batch_size,
         class_mode = 'categorical',
@@ -66,7 +66,7 @@ def dataProcess(batch_size = 32, data_aug = True, image_size = [299,299]):
     # plot one image of each class
     class_names = ['Amphibia', 'Animalia', 'Arachnida', 'Aves', 'Fungi',
                'Insecta', 'Mammalia', 'Mollusca', 'Plantae', 'Reptilia']
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize = (10, 10))
     images, labels = val_generator.next()
     for i in range(9):
         ax = plt.subplot(3, 3, i + 1)
@@ -104,7 +104,7 @@ def buildModel(pre_trained_model = 'InceptionV3',optimizer = 'adam', lr = 0.0001
     # flatten the last layer
     x = Flatten()(pre_model.output)
     # add output layer
-    prediction = Dense(numberOfClasses, activation='softmax')(x)
+    prediction = Dense(numberOfClasses, activation = 'softmax')(x)
 
     # create final model
     model = Model(inputs = pre_model.input, outputs = prediction)
