@@ -36,7 +36,7 @@ def create_cnn_model(filters, fil_size, dense_neuron, batch_norm, dropout, act, 
     model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
 
     return model
-    
+
 """Definition Function for preparing DATA:-"""
 
 def dataProcess(batch_size, data_aug=True):
@@ -144,5 +144,3 @@ if __name__ == "__main__":
         number of fileters in each convolution layer is flexible and can be given by user in command line.
     
     """
-   
-   
