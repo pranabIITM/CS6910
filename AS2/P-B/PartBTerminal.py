@@ -96,7 +96,7 @@ def buildModel(pre_trained_model = 'InceptionV3',optimizer = 'adam', lr = 0.0001
     k = len(pre_model.layers)
     upto = math.ceil(k*freeze)
     for i in range(upto):
-        pre_model.layers[i] = False
+        pre_model.layers[i].trainable = False
     
     import os
     numberOfClasses = len(next(os.walk(train_path))[1])
