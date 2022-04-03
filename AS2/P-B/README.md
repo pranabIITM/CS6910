@@ -1,5 +1,6 @@
 ## Part B - Finetuning a pre-trained CNN model
 <hr>
+
 #### Goal - Learn transfer learning and fine-tuning a pre-trained CNN model. 
 
 
