@@ -229,4 +229,4 @@ train.fit([train_encoder_input,train_decoder_input],train_decoder_target, batch_
         Example:-
         $ python AS3_Q1.py LSTM 32 2 2 16 32 0.2 2 64 0.001
     
-    """
+"""
