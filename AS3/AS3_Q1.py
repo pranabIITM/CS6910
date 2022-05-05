@@ -219,3 +219,14 @@ train.compile(optimizer = Adam(learning_rate=ler),loss='categorical_crossentropy
 train.fit([train_encoder_input,train_decoder_input],train_decoder_target, batch_size=BATCH_SIZE,
            validation_data = ([val_encoder_input,val_decoder_input],val_decoder_target),
            epochs=epo)
+
+"""
+    README Q1 --------------------------------------------------------------------
+        
+        To compile the file with command line arguments write in following format in terminal :-
+        $ python filename.py LayerType NoOfRNN_Units encoderLayers decoderLayers embeddingSize denseSize dropout Epochs BatchSize LearningRate
+        
+        Example:-
+        $ python AS3_Q1.py LSTM 32 2 2 16 32 0.2 2 64 0.001
+    
+    """
