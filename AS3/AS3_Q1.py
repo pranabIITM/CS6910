@@ -73,19 +73,23 @@ def dataProcess(data):
     dec_tar = np.zeros(
         (tlen, t_max_len, len(tar_tokens)+1), dtype="int"
     )
-    for i,(sw,tw) in enumerate(zip(src,tar)):
-        #enmurating the source data and creating input data set
-        for j,ch in enumerate(sw):
-            enc_inp[i,j] = s_tok_map[ch]
-        enc_inp[i,j+1:] = s_tok_map[" "]
-
-        #enmurating the Target data and creating decoder input data set target output
-        for j,ch in enumerate(tw):
+    i = int(0)
+    for (sw,tw) in zip(src,tar):
+        j=int(0)
+        for ch in tw:
             dec_inp[i,j] = t_tok_map[ch]
             if j>0:
                 dec_tar[i,j-1,t_tok_map[ch]] = 1
+            j+=1
         dec_inp[i,j+1:] = t_tok_map[" "]
         dec_tar[i,j:,t_tok_map[" "]] = 1
+        j=int(0)
+        for ch in sw:
+            enc_inp[i,j] = s_tok_map[ch]
+            j+=1
+        enc_inp[i,j+1:] = s_tok_map[" "]
+
+        i += 1
         
     return enc_inp, dec_inp, dec_tar
 
@@ -133,7 +137,6 @@ val_encoder_input, val_decoder_input, val_decoder_target = dataProcess(dev)
 
 def seq2seqModel(Layer = "LSTM", nunits = 32, encl = 2, decl = 2,embds = 32,dense_size=32,dropout=None):
     keras.backend.clear_session()
-    # source_tokens, s_tok_map, s_max_len, tar_tokens, t_tok_map, t_max_len
     enc_inps = Input(shape=(None,))
     enc_emb = Embedding(input_dim=len(source_tokens)+1, output_dim = embds, mask_zero=True)
     encop = enc_emb(enc_inps)
@@ -143,9 +146,11 @@ def seq2seqModel(Layer = "LSTM", nunits = 32, encl = 2, decl = 2,embds = 32,dens
 
     # If the cell type is chosen as RNN ----------------------------------------------------
     if Layer == "RNN":
-        encLays = [SimpleRNN(nunits,return_sequences=True) for i in range(encl-1)]
+        encLays = []
+        for i in range(encl-1):
+            encLays.append(SimpleRNN(nunits,return_sequences=True))
         encLast = SimpleRNN(nunits,return_state=True)
-        encmb = encop
+        encmb = enc_emb(enc_inps)
         for enLay in encLays:
             encmb = enLay(encmb)
             if dropout is not None:
@@ -154,17 +159,23 @@ def seq2seqModel(Layer = "LSTM", nunits = 32, encl = 2, decl = 2,embds = 32,dens
         _, state = encLast(encmb)
         encoder_states = state
         
-        decoder = [SimpleRNN(nunits,return_sequences=True,return_state=True) for i in range(decl)]
-        decEmbop = dec_emb(dec_inps)
-        dLhInp,_ = decoder[0](decEmbop,initial_state=state)
-        for i in range(1,decl):
-            dLhInp,_ = decoder[i](dLhInp,initial_state=state)
+        decoder = []
+        for i in range(decl):
+            decoder.append(SimpleRNN(nunits,return_sequences=True,return_state=True))
+
+        for i in range(decl):
+            if(i==0):
+                dLhInp,_ = decoder[0](dec_emb(dec_inps),initial_state=state)
+            else:
+                dLhInp,_ = decoder[i](dLhInp,initial_state=state)
 
     # If the cell type is chosen as LSTM ----------------------------------------------------    
     elif Layer == "LSTM":
-        encLays = [LSTM(nunits,return_sequences=True) for i in range(encl-1)]
+        encLays = []
+        for i in range(encl-1):
+            encLays.append(LSTM(nunits,return_sequences=True))
         encLast = LSTM(nunits,return_state=True)
-        encmb = encop
+        encmb = enc_emb(enc_inps)
         for enLay in encLays:
             encmb = enLay(encmb)
             if dropout is not None:
@@ -173,18 +184,24 @@ def seq2seqModel(Layer = "LSTM", nunits = 32, encl = 2, decl = 2,embds = 32,dens
         _, state_h,state_c = encLast(encmb)
         encoder_states = [state_h,state_c]
         
-        decoder = [LSTM(nunits,return_sequences=True,return_state=True) for i in range(decl)]
-        
-        decEmbop = dec_emb(dec_inps)
-        dLhInp,_,_ = decoder[0](decEmbop,initial_state=encoder_states)
-        for i in range(1,decl):
-            dLhInp,_,_ = decoder[i](dLhInp,initial_state=encoder_states)
+        decoder = []
+        for i in range(decl):
+            decoder.append(LSTM(nunits,return_sequences=True,return_state=True))
+
+        for i in range(decl):
+            if(i==0):
+                dLhInp,_,_ = decoder[0](dec_emb(dec_inps),initial_state=encoder_states)
+            else:
+                dLhInp,_,_ = decoder[i](dLhInp,initial_state=encoder_states)
 
     # If the cell type is chosen as GRU ----------------------------------------------------  
     elif Layer == "GRU":
-        encLays = [GRU(nunits,return_sequences=True) for i in range(encl-1)]
+        encLays = []
+        for i in range(encl-1):
+            encLays.append(GRU(nunits,return_sequences=True))
+
         encLast = GRU(nunits,return_state=True)
-        encmb = encop
+        encmb = enc_emb(enc_inps)
         for enLay in encLays:
             encmb = enLay(encmb)
             if dropout is not None:
@@ -193,18 +210,20 @@ def seq2seqModel(Layer = "LSTM", nunits = 32, encl = 2, decl = 2,embds = 32,dens
         _, state = encLast(encmb)
         encoder_states = state
         
-        decoder = [GRU(nunits,return_sequences=True,return_state=True) for i in range(decl)]
+        decoder = []
+        for i in range(decl):
+            decoder.append(GRU(nunits, return_sequences=True, return_state=True))
         
-        decEmbop = dec_emb(dec_inps)
-        dLhInp,_ = decoder[0](decEmbop,initial_state=state)
-        for i in range(1,decl):
-            dLhInp,_ = decoder[i](dLhInp,initial_state=state)
+        for i in range(decl):
+            if(i==0):
+                dLhInp,_ = decoder[0](dec_emb(dec_inps),initial_state=state)
+            else:
+                dLhInp,_ = decoder[i](dLhInp,initial_state=state)
             
         
     DLayerH = Dense(dense_size, activation='relu')
-    preact = DLayerH(dLhInp)
     DL_O = Dense(len(tar_tokens)+1, activation = 'softmax')
-    act_op = DL_O(preact)
+    act_op = DL_O(DLayerH(dLhInp))
     
     train_model = Model([enc_inps,dec_inps],act_op)
 
