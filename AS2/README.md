@@ -13,3 +13,5 @@ Part C - Use an existing pre-trained CNN model for a real world application.<br>
 Click on P-A to refer Part A<br>
 Click on P-B to refer Part B<br>
 Click on P-C to refer Part C<br>
+
+Link to report: https://wandb.ai/pandp/cs6910-As-2/reports/CS6910-Assignment-2--VmlldzoxNzYzMjU4
